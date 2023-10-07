@@ -1,9 +1,12 @@
 export const data: food[] = [
   {
-    title: "سیب",
-    value: 78,
+    title: "سیب قرمز",
+    value: 57,
   },
-
+  {
+    title: "سیب زرد",
+    value: 52,
+  },
   {
     title: "تخم مرغ",
     value: 143,
@@ -49,12 +52,32 @@ export const data: food[] = [
     value: 74,
   },
   {
+    title: "هلو انجیری",
+    value: 41,
+  },
+  {
+    title: "هلو",
+    value: 35,
+  },
+  {
     title: "موز",
     value: 89,
   },
   {
     title: "نان جو",
     value: 313,
+  },
+  {
+    title: "نان سنگک",
+    value: 259,
+  },
+  {
+    title: "نان لواش",
+    value: 238,
+  },
+  {
+    title: "نان بربری",
+    value: 360,
   },
   {
     title: "عسل",
@@ -81,6 +104,10 @@ export const data: food[] = [
     value: 40,
   },
   {
+    title: "فلفل دلمه",
+    value: 20,
+  },
+  {
     title: "سبزی خوردن",
     value: 36,
   },
@@ -89,12 +116,20 @@ export const data: food[] = [
     value: 15,
   },
   {
+    title: "خیارشور",
+    value: 11,
+  },
+  {
     title: "طالبی",
     value: 40,
   },
   {
     title: "خرما",
     value: 282,
+  },
+  {
+    title: "خربزه",
+    value: 36,
   },
   {
     title: "تخم مرغ خام",
@@ -118,7 +153,7 @@ export const data: food[] = [
   },
   {
     title: "شلیل",
-    value: 54,
+    value: 44,
   },
   {
     title: "هندوانه",
@@ -128,9 +163,10 @@ export const data: food[] = [
     title: "پنیر لیقوان",
     value: 72,
   },
+
   {
-    title: "سیب",
-    value: 52,
+    title: "برنج خام",
+    value: 130,
   },
   {
     title: "ترشی مخلوط",
@@ -162,6 +198,22 @@ export const data: food[] = [
   },
   {
     title: "آلو قرمز",
+    value: 50,
+  },
+  {
+    title: "بادمجان",
+    value: 25,
+  },
+  {
+    title: "دوغ آبعلی",
+    value: 35,
+  },
+  {
+    title: "شیر کم چرب",
+    value: 42,
+  },
+  {
+    title: "شیر پر چرب",
     value: 50,
   },
 ];
