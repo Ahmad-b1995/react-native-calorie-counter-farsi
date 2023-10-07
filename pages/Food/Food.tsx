@@ -9,21 +9,21 @@ import {
 } from "react-native";
 import {data} from "../../data";
 
-const Item = ({item}: any) => {
+const Item = ({item, navigation}: any) => {
   return (
-    <TouchableOpacity onPress={() => console.log(item)}>
+    <TouchableOpacity onPress={() => navigation.navigate("Home", item.item)}>
       <View style={styles.item}>
-        <Text>{item.title}</Text>
-        <Text>{item.value}</Text>
+        <Text>{item.item.title}</Text>
+        <Text>{item.item.value}</Text>
       </View>
     </TouchableOpacity>
   );
 };
 
-export default function Food() {
+export default function Food({navigation}: any) {
   return (
     <View style={styles.container}>
-      <FlatList data={data} renderItem={Item} />
+      <FlatList data={data} renderItem={(item) => Item({item, navigation})} />
     </View>
   );
 }
@@ -43,9 +43,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     fontSize: 18,
     borderRadius: 10,
-    display: 'flex',
-    flexDirection: 'row-reverse',
-    justifyContent: 'space-between'
+    display: "flex",
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
   },
   title: {
     fontSize: 32,

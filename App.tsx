@@ -14,7 +14,11 @@ export default function App() {
           component={Homepage}
           options={{title: "کالری شمار"}}
         />
-        <Stack.Screen name="foods" component={Food} />
+        <Stack.Screen
+          name="foods"
+          component={Food}
+          options={{title: "مواد غذایی"}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

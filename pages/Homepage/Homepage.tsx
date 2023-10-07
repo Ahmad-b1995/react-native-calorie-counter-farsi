@@ -1,30 +1,26 @@
 import {StatusBar} from "expo-status-bar";
 import React, {useState} from "react";
 import {
-  Button,
   Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
-import {data} from "../../data";
 
-function Homepage({navigation}: any) {
-  const [open, setOpen] = useState<boolean>(false);
-  const [value, setValue] = useState(null);
-  const [calorie, setCalorie] = useState<number>(0);
+function Homepage({navigation, route}: any) {
+  const params = route?.params;
   const [gram, setGram] = useState("");
-  const [items, setItems] = useState(data);
 
   return (
     <View style={styles.container}>
       <Pressable
         style={styles.input}
-        onPress={() => navigation.navigate("foods", {name: "Jane"})}
+        onPress={() => navigation.navigate("foods")}
       >
-        <Text style={styles.text}>برای انتخاب مواد غذایی کلیک کنید  --&gt;</Text>
+        <Text style={styles.text}>
+          {params ? params.title : "برای انتخاب مواد غذایی کلیک کنید -->"}
+        </Text>
       </Pressable>
       <TextInput
         style={styles.input}
@@ -33,7 +29,9 @@ function Homepage({navigation}: any) {
         value={gram}
         keyboardType="numeric"
       />
-      <Text style={styles.output}>{(+gram * calorie) / 100}</Text>
+      <Text style={styles.output}>
+        {params ? (+gram * params.value) / 100 : 0}
+      </Text>
       <StatusBar style="auto" />
     </View>
   );
@@ -50,7 +48,7 @@ const styles = StyleSheet.create({
     gap: 25,
   },
   text: {
-    color: "#0000006b",
+    color: "#000000b1",
   },
   input: {
     backgroundColor: "#b7e8ff6b",

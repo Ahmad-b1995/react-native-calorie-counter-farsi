@@ -1,4 +1,4 @@
-export const data = [
+export const data: food[] = [
   {
     title: "سیب",
     value: 78,
@@ -165,3 +165,8 @@ export const data = [
     value: 50,
   },
 ];
+
+export interface food {
+  title: string;
+  value: number;
+}
