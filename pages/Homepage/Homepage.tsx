@@ -1,16 +1,47 @@
-import {StatusBar} from "expo-status-bar";
-import React, {useState} from "react";
+import { StatusBar } from "expo-status-bar";
+import React, { useState, useEffect } from "react";
 import {
   Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
+  Button,
+  FlatList,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-function Homepage({navigation, route}: any) {
+function Homepage({ navigation, route }: any) {
   const params = route?.params;
   const [gram, setGram] = useState("");
+  const [calories, setCalories] = useState<number | null>(null);
+  const [calorieList, setCalorieList] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadCalories = async () => {
+      try {
+        const storedCalories = await AsyncStorage.getItem("calorieList");
+        if (storedCalories) {
+          setCalorieList(JSON.parse(storedCalories));
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    loadCalories();
+  }, []);
+
+  const addCalories = async () => {
+    const newCalories = params ? (+gram * params.value) / 100 : 0;
+    const newEntry = { title: params?.title, calories: newCalories };
+    const updatedCalorieList = [...calorieList, newEntry];
+    setCalorieList(updatedCalorieList);
+    await AsyncStorage.setItem("calorieList", JSON.stringify(updatedCalorieList));
+  };
+
+  const calculateTotalCalories = () => {
+    return calorieList.reduce((total, item) => total + item.calories, 0);
+  };
 
   return (
     <View style={styles.container}>
@@ -31,6 +62,21 @@ function Homepage({navigation, route}: any) {
       />
       <Text style={styles.output}>
         {params ? (+gram * params.value) / 100 : 0}
+      </Text>
+      {params && <Button title="افزودن کالری" onPress={addCalories} />}
+      <FlatList
+        data={calorieList}
+        keyExtractor={(item, index) => index.toString()}
+        style={styles.flatlist}
+        renderItem={({ item }) => (
+          <View style={styles.listItem}>
+            <Text>{item.calories.toFixed(2)}</Text>
+            <Text>{item.title}</Text>
+          </View>
+        )}
+      />
+      <Text style={styles.total}>
+        مجموع کالری مصرفی: {calculateTotalCalories().toFixed(2)}
       </Text>
       <StatusBar style="auto" />
     </View>
@@ -63,6 +109,23 @@ const styles = StyleSheet.create({
   output: {
     marginTop: 20,
     fontSize: 20,
+  },
+  flatlist: {
+    width: "100%",
+  },
+  listItem: {
+    backgroundColor: "#accdee4a",
+    padding: 15,
+    fontSize: 18,
+    borderRadius: 10,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  total: {
+    fontSize: 20,
+    marginTop: 20,
   },
 });
 
