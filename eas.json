@@ -9,8 +9,9 @@
     },
     "preview": {
       "distribution": "internal",
-      "android":{
-        "buildType": "apk"
+      "android": {
+        "buildType": "apk",
+        "image": "latest"
       }
     },
     "production": {},
@@ -23,7 +24,7 @@
       "developmentClient": true
     }
   },
-  
+
   "submit": {
     "production": {}
   }
