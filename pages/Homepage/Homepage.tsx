@@ -15,10 +15,9 @@ import { formatISO, startOfDay } from "date-fns";
 function Homepage({ navigation, route }: any) {
   const params = route?.params;
   const [gram, setGram] = useState("");
-  const [calories, setCalories] = useState<number | null>(null);
-  const [calorieList, setCalorieList] = useState<{ [key: string]: number[] }>({});
+  const [calorieList, setCalorieList] = useState<{ [key: string]: { title: string; calories: number }[] }>({});
 
-  const today = formatISO(startOfDay(new Date()));
+  const today = formatISO(startOfDay(new Date())); // Get the start of today in ISO format
 
   useEffect(() => {
     const loadCalories = async () => {
@@ -36,9 +35,10 @@ function Homepage({ navigation, route }: any) {
 
   const addCalories = async () => {
     const newCalories = params ? (+gram * params.value) / 100 : 0;
+    const newEntry = { title: params?.title, calories: newCalories };
     const updatedCalorieList = {
       ...calorieList,
-      [today]: calorieList[today] ? [...calorieList[today], newCalories] : [newCalories],
+      [today]: calorieList[today] ? [...calorieList[today], newEntry] : [newEntry],
     };
     setCalorieList(updatedCalorieList);
     await AsyncStorage.setItem("calorieList", JSON.stringify(updatedCalorieList));
@@ -55,7 +55,7 @@ function Homepage({ navigation, route }: any) {
   };
 
   const calculateTotalCalories = () => {
-    return calorieList[today]?.reduce((total, cal) => total + cal, 0) || 0;
+    return calorieList[today]?.reduce((total, item) => total + item.calories, 0) || 0;
   };
 
   return (
@@ -85,7 +85,7 @@ function Homepage({ navigation, route }: any) {
         style={styles.flatlist}
         renderItem={({ item, index }) => (
           <View style={styles.listItem}>
-            <Text>{item.toFixed(2)}</Text>
+            <Text>{item.title}: {item.calories.toFixed(2)}</Text>
             <Button title="حذف" onPress={() => removeCalories(today, index)} />
           </View>
         )}
