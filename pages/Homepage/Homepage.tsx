@@ -10,12 +10,15 @@ import {
   FlatList,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { formatISO, startOfDay } from "date-fns";
 
 function Homepage({ navigation, route }: any) {
   const params = route?.params;
   const [gram, setGram] = useState("");
   const [calories, setCalories] = useState<number | null>(null);
-  const [calorieList, setCalorieList] = useState<any[]>([]);
+  const [calorieList, setCalorieList] = useState<{ [key: string]: number[] }>({});
+
+  const today = formatISO(startOfDay(new Date()));
 
   useEffect(() => {
     const loadCalories = async () => {
@@ -33,14 +36,26 @@ function Homepage({ navigation, route }: any) {
 
   const addCalories = async () => {
     const newCalories = params ? (+gram * params.value) / 100 : 0;
-    const newEntry = { title: params?.title, calories: newCalories };
-    const updatedCalorieList = [...calorieList, newEntry];
+    const updatedCalorieList = {
+      ...calorieList,
+      [today]: calorieList[today] ? [...calorieList[today], newCalories] : [newCalories],
+    };
+    setCalorieList(updatedCalorieList);
+    await AsyncStorage.setItem("calorieList", JSON.stringify(updatedCalorieList));
+  };
+
+  const removeCalories = async (date: string, index: number) => {
+    const updatedDayCalories = calorieList[date].filter((_, i) => i !== index);
+    const updatedCalorieList = {
+      ...calorieList,
+      [date]: updatedDayCalories,
+    };
     setCalorieList(updatedCalorieList);
     await AsyncStorage.setItem("calorieList", JSON.stringify(updatedCalorieList));
   };
 
   const calculateTotalCalories = () => {
-    return calorieList.reduce((total, item) => total + item.calories, 0);
+    return calorieList[today]?.reduce((total, cal) => total + cal, 0) || 0;
   };
 
   return (
@@ -65,13 +80,13 @@ function Homepage({ navigation, route }: any) {
       </Text>
       {params && <Button title="افزودن کالری" onPress={addCalories} />}
       <FlatList
-        data={calorieList}
+        data={calorieList[today] || []}
         keyExtractor={(item, index) => index.toString()}
         style={styles.flatlist}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <View style={styles.listItem}>
-            <Text>{item.calories.toFixed(2)}</Text>
-            <Text>{item.title}</Text>
+            <Text>{item.toFixed(2)}</Text>
+            <Button title="حذف" onPress={() => removeCalories(today, index)} />
           </View>
         )}
       />
@@ -121,8 +136,9 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     width: "100%",
-    marginBottom: 10
+    marginBottom: 10,
   },
   total: {
     fontSize: 20,
