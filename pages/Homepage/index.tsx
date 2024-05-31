@@ -8,14 +8,21 @@ import {
   View,
   Button,
   FlatList,
+  Dimensions,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatISO, startOfDay } from "date-fns";
+import { ProgressChart } from "react-native-chart-kit";
+
+const screenWidth = Dimensions.get("window").width;
 
 function Homepage({ navigation, route }: any) {
   const params = route?.params;
   const [gram, setGram] = useState("");
   const [calorieList, setCalorieList] = useState<{ [key: string]: { title: string; calories: number }[] }>({});
+  const [calorieGoal, setCalorieGoal] = useState(2000);
+  const [weights, setWeights] = useState<number[]>([]);
+  const [weight, setWeight] = useState("");
 
   const today = formatISO(startOfDay(new Date())); // Get the start of today in ISO format
 
@@ -23,8 +30,13 @@ function Homepage({ navigation, route }: any) {
     const loadCalories = async () => {
       try {
         const storedCalories = await AsyncStorage.getItem("calorieList");
+        const userData = await AsyncStorage.getItem("userData");
         if (storedCalories) {
           setCalorieList(JSON.parse(storedCalories));
+        }
+        if (userData) {
+          const parsedData = JSON.parse(userData);
+          setCalorieGoal(parsedData.calorieGoal);
         }
       } catch (error) {
         console.error(error);
@@ -58,6 +70,52 @@ function Homepage({ navigation, route }: any) {
     return calorieList[today]?.reduce((total, item) => total + item.calories, 0) || 0;
   };
 
+  const totalCalories = calculateTotalCalories();
+  const progress = totalCalories / calorieGoal;
+
+  const data = {
+    data: [progress],
+  };
+
+  const handleWeightSubmit = async () => {
+    const newWeight = parseFloat(weight);
+    const updatedWeights = [...weights, newWeight];
+    setWeights(updatedWeights);
+    await AsyncStorage.setItem("weights", JSON.stringify(updatedWeights));
+    setWeight("");
+  };
+
+  useEffect(() => {
+    const loadWeights = async () => {
+      const storedWeights = await AsyncStorage.getItem("weights");
+      if (storedWeights) {
+        setWeights(JSON.parse(storedWeights));
+      }
+    };
+    loadWeights();
+  }, []);
+
+  useEffect(() => {
+    const checkWeightProgress = async () => {
+      if (weights.length >= 7) {
+        const initialWeight = weights[weights.length - 7];
+        const currentWeight = weights[weights.length - 1];
+        const weightDiff = initialWeight - currentWeight;
+
+        const userData = await AsyncStorage.getItem("userData");
+        if (userData) {
+          const parsedData = JSON.parse(userData);
+          if (parsedData.goal === "cutting" && weightDiff < 0.5) {
+            parsedData.calorieGoal -= 70;
+          }
+          await AsyncStorage.setItem("userData", JSON.stringify(parsedData));
+          setCalorieGoal(parsedData.calorieGoal);
+        }
+      }
+    };
+    checkWeightProgress();
+  }, [weights]);
+
   return (
     <View style={styles.container}>
       <Pressable
@@ -90,9 +148,32 @@ function Homepage({ navigation, route }: any) {
           </View>
         )}
       />
-      <Text style={styles.total}>
-        مجموع کالری مصرفی: {calculateTotalCalories().toFixed(2)}
-      </Text>
+      <View style={styles.graphContainer}>
+        <ProgressChart
+          data={data}
+          width={screenWidth}
+          height={230}
+          strokeWidth={15}
+          radius={47}
+          chartConfig={{
+            backgroundGradientFrom: "transparent",
+            backgroundGradientTo: "transparent",
+            color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`,
+          }}
+          hideLegend={true}
+        />
+        <Text style={styles.total}>
+          مجموع کالری مصرفی: {totalCalories.toFixed(2)} / {calorieGoal}
+        </Text>
+      </View>
+      <TextInput
+        style={styles.input}
+        onChangeText={(value) => setWeight(value)}
+        placeholder={"وزن (کیلوگرم)"}
+        value={weight}
+        keyboardType="numeric"
+      />
+      <Button title="ثبت وزن" onPress={handleWeightSubmit} />
       <StatusBar style="auto" />
     </View>
   );
@@ -104,6 +185,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginRight: 15,
     marginLeft: 15,
+    marginBottom: 15,
     alignItems: "center",
     justifyContent: "flex-start",
     gap: 25,
@@ -139,6 +221,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     marginBottom: 10,
+  },
+  graphContainer: {
+    marginTop: 20,
+    alignItems: 'center',
   },
   total: {
     fontSize: 20,
