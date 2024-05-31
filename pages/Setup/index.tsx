@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { View, TextInput, Button, StyleSheet, Text } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from "@react-native-picker/picker";
 import { calculateBMR } from "../../utils/BMR";
 import { calculateTDEE } from "../../utils/TDEE";
 
@@ -33,39 +34,52 @@ function Setup({ navigation }: any) {
     return (
         <View style={styles.container}>
             <TextInput
-                placeholder="Weight (kg)"
+                placeholder="وزن (کیلوگرم)"
                 value={weight}
                 onChangeText={setWeight}
                 keyboardType="numeric"
                 style={styles.input}
             />
             <TextInput
-                placeholder="Height (cm)"
+                placeholder="قد (سانتی‌متر)"
                 value={height}
                 onChangeText={setHeight}
                 keyboardType="numeric"
                 style={styles.input}
             />
             <TextInput
-                placeholder="Age"
+                placeholder="سن"
                 value={age}
                 onChangeText={setAge}
                 keyboardType="numeric"
                 style={styles.input}
             />
-            <TextInput
-                placeholder="Activity Level (sedentary, light, moderate, very active, extra active)"
-                value={activityLevel}
-                onChangeText={setActivityLevel}
-                style={styles.input}
-            />
-            <TextInput
-                placeholder="Goal (cutting, bulking)"
-                value={goal}
-                onChangeText={setGoal}
-                style={styles.input}
-            />
-            <Button title="Save" onPress={handleSave} />
+            <Text style={styles.label}>سطح فعالیت</Text>
+            <View style={styles.pickerContainer}>
+                <Picker
+                    selectedValue={activityLevel}
+                    onValueChange={(itemValue) => setActivityLevel(itemValue)}
+                    style={styles.picker}
+                >
+                    <Picker.Item label="نشسته" value="sedentary" />
+                    <Picker.Item label="کم تحرک" value="light" />
+                    <Picker.Item label="متوسط" value="moderate" />
+                    <Picker.Item label="خیلی فعال" value="very active" />
+                    <Picker.Item label="بسیار فعال" value="extra active" />
+                </Picker>
+            </View>
+            <Text style={styles.label}>هدف</Text>
+            <View style={styles.pickerContainer}>
+                <Picker
+                    selectedValue={goal}
+                    onValueChange={(itemValue) => setGoal(itemValue)}
+                    style={styles.picker}
+                >
+                    <Picker.Item label="کاهش وزن" value="cutting" />
+                    <Picker.Item label="افزایش وزن" value="bulking" />
+                </Picker>
+            </View>
+            <Button title="ذخیره" onPress={handleSave} />
         </View>
     );
 }
@@ -82,6 +96,22 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 12,
         paddingHorizontal: 8,
+        textAlign: "right", 
+    },
+    pickerContainer: {
+        height: 40,
+        borderColor: "gray",
+        borderWidth: 1,
+        marginBottom: 12,
+        justifyContent: "center",
+    },
+    picker: {
+        height: 40,
+        width: "100%",
+    },
+    label: {
+        textAlign: "right", 
+        marginBottom: 5,
     },
 });
 

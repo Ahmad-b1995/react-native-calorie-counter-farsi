@@ -1,3 +1,4 @@
+// Homepage.tsx
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
 import {
@@ -21,8 +22,6 @@ function Homepage({ navigation, route }: any) {
   const [gram, setGram] = useState("");
   const [calorieList, setCalorieList] = useState<{ [key: string]: { title: string; calories: number }[] }>({});
   const [calorieGoal, setCalorieGoal] = useState(2000);
-  const [weights, setWeights] = useState<number[]>([]);
-  const [weight, setWeight] = useState("");
 
   const today = formatISO(startOfDay(new Date())); // Get the start of today in ISO format
 
@@ -77,45 +76,6 @@ function Homepage({ navigation, route }: any) {
     data: [progress],
   };
 
-  const handleWeightSubmit = async () => {
-    const newWeight = parseFloat(weight);
-    const updatedWeights = [...weights, newWeight];
-    setWeights(updatedWeights);
-    await AsyncStorage.setItem("weights", JSON.stringify(updatedWeights));
-    setWeight("");
-  };
-
-  useEffect(() => {
-    const loadWeights = async () => {
-      const storedWeights = await AsyncStorage.getItem("weights");
-      if (storedWeights) {
-        setWeights(JSON.parse(storedWeights));
-      }
-    };
-    loadWeights();
-  }, []);
-
-  useEffect(() => {
-    const checkWeightProgress = async () => {
-      if (weights.length >= 7) {
-        const initialWeight = weights[weights.length - 7];
-        const currentWeight = weights[weights.length - 1];
-        const weightDiff = initialWeight - currentWeight;
-
-        const userData = await AsyncStorage.getItem("userData");
-        if (userData) {
-          const parsedData = JSON.parse(userData);
-          if (parsedData.goal === "cutting" && weightDiff < 0.5) {
-            parsedData.calorieGoal -= 70;
-          }
-          await AsyncStorage.setItem("userData", JSON.stringify(parsedData));
-          setCalorieGoal(parsedData.calorieGoal);
-        }
-      }
-    };
-    checkWeightProgress();
-  }, [weights]);
-
   return (
     <View style={styles.container}>
       <Pressable
@@ -151,29 +111,26 @@ function Homepage({ navigation, route }: any) {
       <View style={styles.graphContainer}>
         <ProgressChart
           data={data}
-          width={screenWidth}
+          width={200}
           height={110}
           strokeWidth={15}
           radius={47}
           chartConfig={{
-            backgroundGradientFrom: "rgba(0, 0, 0, 0)",
-            backgroundGradientTo: "rgba(0, 0, 0, 0)",
+            backgroundGradientFrom: "transparent",
+            backgroundGradientTo: "transparent",
+            backgroundColor: "transparent",
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
             color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`,
           }}
           hideLegend={true}
         />
         <Text style={styles.total}>
-          مجموع کالری مصرفی: {totalCalories.toFixed(2)} / {calorieGoal}
+          مجموع کالری مصرفی:
+          <br />
+          {calorieGoal} / {totalCalories.toFixed(2)}
         </Text>
       </View>
-      <TextInput
-        style={styles.input}
-        onChangeText={(value) => setWeight(value)}
-        placeholder={"وزن (کیلوگرم)"}
-        value={weight}
-        keyboardType="numeric"
-      />
-      <Button title="ثبت وزن" onPress={handleWeightSubmit} />
       <StatusBar style="auto" />
     </View>
   );
@@ -223,11 +180,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   graphContainer: {
-    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    width: '100%'
   },
   total: {
-    fontSize: 20,
-    marginTop: 20,
+    fontSize: 19,
   },
 });
 
