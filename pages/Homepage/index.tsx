@@ -152,12 +152,12 @@ function Homepage({ navigation, route }: any) {
         <ProgressChart
           data={data}
           width={screenWidth}
-          height={230}
+          height={110}
           strokeWidth={15}
           radius={47}
           chartConfig={{
-            backgroundGradientFrom: "transparent",
-            backgroundGradientTo: "transparent",
+            backgroundGradientFrom: "rgba(0, 0, 0, 0)",
+            backgroundGradientTo: "rgba(0, 0, 0, 0)",
             color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`,
           }}
           hideLegend={true}
@@ -223,7 +223,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   graphContainer: {
-    marginTop: 20,
     alignItems: 'center',
   },
   total: {
