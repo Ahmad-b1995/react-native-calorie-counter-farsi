@@ -127,7 +127,7 @@ function Homepage({ navigation, route }: any) {
         />
         <Text style={styles.total}>
           مجموع کالری مصرفی:
-          <br />
+          {"\n"}
           {calorieGoal} / {totalCalories.toFixed(2)}
         </Text>
       </View>
