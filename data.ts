@@ -216,6 +216,10 @@ export const data: food[] = [
     title: "شیر پر چرب",
     value: 50,
   },
+  {
+    title: "کاهو",
+    value: 15,
+  },
 ];
 
 export interface food {

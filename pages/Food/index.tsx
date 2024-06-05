@@ -1,29 +1,50 @@
-import React from "react";
-import {
-  Button,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import {data} from "../../data";
+import React, { useState } from "react";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SearchBar } from "react-native-elements";
+import { data, food } from "../../data";
 
-const Item = ({item, navigation}: any) => {
+const Item = ({ item, navigation }: any) => {
   return (
-    <TouchableOpacity onPress={() => navigation.navigate("Home", item.item)}>
+    <TouchableOpacity onPress={() => navigation.navigate("Home", item)}>
       <View style={styles.item}>
-        <Text>{item.item.title}</Text>
-        <Text>{item.item.value}</Text>
+        <Text>{item.title}</Text>
+        <Text>{item.value}</Text>
       </View>
     </TouchableOpacity>
   );
 };
 
-export default function Food({navigation}: any) {
+export default function Food({ navigation }: any) {
+  const [search, setSearch] = useState("");
+  const [filteredData, setFilteredData] = useState(data);
+
+  const updateSearch = (searchText: string) => {
+    setSearch(searchText);
+    if (searchText) {
+      const newData = data.filter((item) => {
+        const itemData = item.title ? item.title.toUpperCase() : "".toUpperCase();
+        const textData = searchText.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredData(newData);
+    } else {
+      setFilteredData(data);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <FlatList data={data} renderItem={(item) => Item({item, navigation})} />
+      <SearchBar
+        placeholder="جستجوی مواد غذایی..."
+        onChangeText={updateSearch}
+        value={search}
+        lightTheme
+      />
+      <FlatList
+        data={filteredData}
+        renderItem={({ item }) => <Item item={item} navigation={navigation} />}
+        keyExtractor={(item) => item.title}
+      />
     </View>
   );
 }
