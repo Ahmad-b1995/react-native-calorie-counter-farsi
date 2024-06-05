@@ -220,6 +220,14 @@ export const data: food[] = [
     title: "کاهو",
     value: 15,
   },
+  {
+    title: "کاهو",
+    value: 15,
+  },
+  {
+    title: "روغن زیتون",
+    value: 884,
+  },
 ];
 
 export interface food {
