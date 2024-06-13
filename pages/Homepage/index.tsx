@@ -78,23 +78,24 @@ function Homepage({ navigation, route }: any) {
   };
 
   return (
-    <View >
+    <View className="bg-red-500 text-red-500 font-bold text-9xl">
       <Pressable
         
         onPress={() => navigation.navigate("foods")}
       >
-        <Text >
+        <Text className="bg-red-500" >
           {params ? params.title : "برای انتخاب مواد غذایی کلیک کنید -->"}
         </Text>
       </Pressable>
       <TextInput
-        
         onChangeText={(value) => setGram(value)}
-        placeholder={"مقدار مواد غذایی (گرم)"}
+        // placeholder={"مقدار مواد غذایی (گرم)"}
+        className="bg-red-500"
+        placeholder="klklklkl"
         value={gram}
         keyboardType="numeric"
       />
-      <View className="flex flex-row bg-red-500 items-center justify-center">
+      <View className="flex flex-row bg-red-500 text-red-400 items-center justify-center">
         <Text >
           {params ? (+gram * params.value) / 100 : 0}
         </Text>
