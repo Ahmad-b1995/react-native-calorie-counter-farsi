@@ -1,19 +1,20 @@
-// Homepage.tsx
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
 import {
   Pressable,
-  StyleSheet,
+  // StyleSheet,
   Text,
   TextInput,
   View,
-  Button,
   FlatList,
   Dimensions,
+  TouchableOpacity,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatISO, startOfDay } from "date-fns";
 import { ProgressChart } from "react-native-chart-kit";
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Button } from "react-native-elements";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -77,38 +78,42 @@ function Homepage({ navigation, route }: any) {
   };
 
   return (
-    <View style={styles.container}>
+    <View >
       <Pressable
-        style={styles.input}
+        
         onPress={() => navigation.navigate("foods")}
       >
-        <Text style={styles.text}>
+        <Text >
           {params ? params.title : "برای انتخاب مواد غذایی کلیک کنید -->"}
         </Text>
       </Pressable>
       <TextInput
-        style={styles.input}
+        
         onChangeText={(value) => setGram(value)}
         placeholder={"مقدار مواد غذایی (گرم)"}
         value={gram}
         keyboardType="numeric"
       />
-      <Text style={styles.output}>
-        {params ? (+gram * params.value) / 100 : 0}
-      </Text>
-      {params && <Button title="افزودن کالری" onPress={addCalories} />}
+      <View className="flex flex-row bg-red-500 items-center justify-center">
+        <Text >
+          {params ? (+gram * params.value) / 100 : 0}
+        </Text>
+        {params && <Button title="افزودن کالری" onPress={addCalories} />}
+      </View>
       <FlatList
         data={calorieList[today] || []}
         keyExtractor={(item, index) => index.toString()}
-        style={styles.flatlist}
+        
         renderItem={({ item, index }) => (
-          <View style={styles.listItem}>
+          <View >
             <Text>{item.title}: {item.calories.toFixed(2)}</Text>
-            <Button title="حذف" onPress={() => removeCalories(today, index)} />
+            <TouchableOpacity onPress={() => removeCalories(today, index)}>
+              <Icon name="delete" size={24} color="red" />
+            </TouchableOpacity>
           </View>
         )}
       />
-      <View style={styles.graphContainer}>
+      <View >
         <ProgressChart
           data={data}
           width={200}
@@ -125,7 +130,7 @@ function Homepage({ navigation, route }: any) {
           }}
           hideLegend={true}
         />
-        <Text style={styles.total}>
+        <Text >
           مجموع کالری مصرفی:
           {"\n"}
           {calorieGoal} / {totalCalories.toFixed(2)}
@@ -136,59 +141,59 @@ function Homepage({ navigation, route }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 50,
-    marginRight: 15,
-    marginLeft: 15,
-    marginBottom: 15,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    gap: 25,
-  },
-  text: {
-    color: "#000000b1",
-  },
-  input: {
-    backgroundColor: "#b7e8ff6b",
-    width: "100%",
-    borderColor: "#000000b5",
-    borderWidth: 1,
-    height: 50,
-    borderRadius: 7,
-    padding: 15,
-    zIndex: 1,
-  },
-  output: {
-    marginTop: 20,
-    fontSize: 20,
-  },
-  flatlist: {
-    width: "100%",
-  },
-  listItem: {
-    backgroundColor: "#accdee4a",
-    padding: 15,
-    fontSize: 18,
-    borderRadius: 10,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    marginBottom: 10,
-  },
-  graphContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    width: '100%'
-  },
-  total: {
-    fontSize: 19,
-  },
-});
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     marginTop: 50,
+//     marginRight: 15,
+//     marginLeft: 15,
+//     marginBottom: 15,
+//     alignItems: "center",
+//     justifyContent: "flex-start",
+//     gap: 25,
+//   },
+//   text: {
+//     color: "#000000b1",
+//   },
+//   input: {
+//     backgroundColor: "#b7e8ff6b",
+//     width: "100%",
+//     borderColor: "#000000b5",
+//     borderWidth: 1,
+//     height: 50,
+//     borderRadius: 7,
+//     padding: 15,
+//     zIndex: 1,
+//   },
+//   output: {
+//     marginTop: 20,
+//     fontSize: 20,
+//   },
+//   flatlist: {
+//     width: "100%",
+//   },
+//   listItem: {
+//     backgroundColor: "#accdee4a",
+//     padding: 10,
+//     fontSize: 18,
+//     borderRadius: 10,
+//     display: "flex",
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     width: "100%",
+//     marginBottom: 10,
+//   },
+//   graphContainer: {
+//     display: 'flex',
+//     flexDirection: 'row',
+//     alignItems: 'flex-start',
+//     justifyContent: 'space-between',
+//     width: '100%'
+//   },
+//   total: {
+//     fontSize: 19,
+//   },
+// });
 
 export default Homepage;

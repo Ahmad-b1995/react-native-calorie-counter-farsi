@@ -1,3 +1,10 @@
+// FIXME: Add all nutrition info, not just calorie
+// FIXME: Add dashboard to see all info like weight graph - nutrition consumption
+// FIXME: مانده کالری
+// FIXME: make it English
+// FIXME: add a lot more foods
+// FIXME: moshekele donut chart overflow
+// FIXME: tailwind
 export const data: food[] = [
   {
     title: "سیب قرمز",
@@ -227,6 +234,10 @@ export const data: food[] = [
   {
     title: "روغن زیتون",
     value: 884,
+  },
+  {
+    title: "گردو",
+    value: 654,
   },
 ];
 
